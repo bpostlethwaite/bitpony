@@ -7,6 +7,7 @@ lib-cov
 *.pid
 *.gz
 
+auth.json
 pids
 logs
 results
