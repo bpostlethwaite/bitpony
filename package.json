@@ -1,0 +1,28 @@
+{
+  "name": "bitpony",
+  "version": "0.0.0",
+  "description": "bitpony hauls bitcoins",
+  "main": "bigml-test.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bpostlethwaite/bitpony.git"
+  },
+  "author": "ben postlethwaite",
+  "license": "GPL",
+  "readmeFilename": "README.md",
+  "gitHead": "854c15e68fea6a062a4b2c3f548e7c83db7438bb",
+  "dependencies": {
+    "fileswap-stream": "~0.1.3",
+    "websocket-stream": "~0.2.0",
+    "ntwitter": "~0.5.0",
+    "ws": "~0.4.27",
+    "twilio": "~1.1.4",
+    "JSONStream": "~0.6.4"
+  }
+}
