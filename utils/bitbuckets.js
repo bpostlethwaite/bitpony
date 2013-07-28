@@ -16,6 +16,16 @@ reconnect(gstream, function (stream) {
 
   var unixTime = parseInt(data.now.slice(0,13))
 
+   if (min === unixTime)
+     bitbucket.add()
+   else {
+     /*
+      * New bucket
+      */
+     var bucket = bitbucket.empty()
+     bitbucket.add()
+
+
    if (bitbucket.add(unixTime, data.last_local.value, data.vol.value))
      console.log(bitbucket.data)
 

@@ -3,28 +3,57 @@ var JSONStream = require('JSONStream')
   , test = require('tap').test
   , data = require("./testData.json")
 
+
 var bitbucket = BitBucket()
 
-// test("another one", function (t) {
-//   t.plan(1)
-//   t.ok(true, "It's ok to plan, and also end.  Watch.")
-//   t.end() // but it must match the plan!
-// })
+test("bucket values", function (t) {
 
+  var buckets = []
 
-bitbucket.on('bucket', function (bucket) {
-  console.log(bucket)
-})
+  /*
+   * Send all test data into bitbucket.
+   */
+  var times = []
+    , prices = []
+    , vols = []
 
-/*
- * Send all test data into bitbucket.
- */
-data.forEach( function (bucket) {
-  for (var i = 0; i < bucket.times.length; i++) {
-    bitbucket.add(bucket.times[i], bucket.prices[i], bucket.vols[i])
+  data.forEach( function (testbucket) {
+    times = times.concat(testbucket.times)
+    prices = prices.concat(testbucket.prices)
+    vols = vols.concat(testbucket.vols)
+  })
+
+  var min = (new Date(times[0])).getMinutes()
+
+  for (var i = 0; i < times.length; i++) {
+
+    if ((new Date(times[i])).getMinutes() === min) {
+      bitbucket.add(times[i], prices[i], vols[i])
+    }
+    else {
+      min = (new Date(times[i])).getMinutes()
+      buckets.push( bitbucket.empty() )
+      bitbucket.newBucket(
+      bitbucket.add(times[i], prices[i], vols[i])
+
+    }
   }
+  buckets.push( bitbucket.empty() )
+
+  var bucket, testbucket
+  for (i = 0; i < data.length; i++) {
+    testbucket = data[i]
+    bucket = buckets[i]
+    Object.keys(bucket).forEach(function (key) {
+      t.equal(testbucket[key], bucket[key])
+    })
+  }
+
+
+
+  t.end()
+
+
 })
 
-/*
- * bitbucket.get()
- */
+
