@@ -30,7 +30,10 @@ function simBucket (startTime) {
     , time = startTime
     , newtime
 
-  t.startTime = startTime
+  /*
+   * Floor startTime to nearest minute
+   */
+  t.startTime = ( ((startTime/1000) | 0) - (new Date(startTime)).getSeconds() ) * 1000
   t.priceOpen = price
   t.volOpen = vol
 

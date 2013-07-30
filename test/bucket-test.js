@@ -1,14 +1,16 @@
 var JSONStream = require('JSONStream')
-  , BitBucket = require("../lib/bitbucket")
+  , BucketStream = require("../lib/bucket-stream")
   , test = require('tap').test
   , data = require("./testData.json")
+  , through = require('stream').PassThrough({objectMode: true})
 
+var bucketStream = BucketStream()
 
-var bitbucket = BitBucket()
+through.pipe(bucketStream)
+
 
 test("bucket values", function (t) {
 
-  var buckets = []
 
   /*
    * Send all test data into bitbucket.
@@ -23,32 +25,37 @@ test("bucket values", function (t) {
     vols = vols.concat(testbucket.vols)
   })
 
-  var min = (new Date(times[0])).getMinutes()
 
   for (var i = 0; i < times.length; i++) {
-
-    if ((new Date(times[i])).getMinutes() === min) {
-      bitbucket.add(times[i], prices[i], vols[i])
-    }
-    else {
-      min = (new Date(times[i])).getMinutes()
-      buckets.push( bitbucket.empty() )
-      bitbucket.newBucket(
-      bitbucket.add(times[i], prices[i], vols[i])
-
-    }
-  }
-  buckets.push( bitbucket.empty() )
-
-  var bucket, testbucket
-  for (i = 0; i < data.length; i++) {
-    testbucket = data[i]
-    bucket = buckets[i]
-    Object.keys(bucket).forEach(function (key) {
-      t.equal(testbucket[key], bucket[key])
+    through.write({
+      now: times[i]
+    , price: prices[i]
+    , volume: vols[i]
     })
   }
 
+  /*
+   * Push out last bucket with random data
+   */
+  through.write({
+    now: times[times.length] + 61000
+  , price: 3454
+  , volume: 123456
+  })
+
+
+  var testbucket, ind = 0
+
+  bucketStream.on('data', function (bucket) {
+    console.log(bucket)
+    testbucket = data[ind]
+    ind++
+
+    Object.keys(bucket).forEach(function (key) {
+      t.equal(testbucket[key], bucket[key])
+    })
+
+  })
 
 
   t.end()
