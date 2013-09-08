@@ -41,7 +41,7 @@ function socketHandler (stream) {
   var csv = require('csv-stream')
     , fs = require('fs')
     , path = require('path')
-    , duka2json = require('./lib/duka2json')({header: 1})
+    , duka2json = require('./node/lib/duka2json')({header: 1})
 
   var csvoptions = {
     delimiter : ','
@@ -49,8 +49,8 @@ function socketHandler (stream) {
   , columns : ["Time", "Open", "High", "Low", "Close", "Volume"]
   }
 
-  var FILE = "EURUSD_Candlestick_1_D_BID_24.08.2011-24.08.2013.csv"
-    , CSV = path.join(process.env.HOME, "programming/node/bitpony/data/forex/dukascopy", FILE)
+  var FILE = "EURUSD_Candlestick_1_m_BID_20.08.2013-22.08.2013.csv"
+    , CSV = path.join(process.env.HOME, "programming/bitpony/data/forex/dukascopy", FILE)
 
   var csvStream = csv.createStream(csvoptions)
 

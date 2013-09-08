@@ -1,7 +1,7 @@
 # Forex market prediction
 
 ## Forex Trading
-- Busiest trades during London Newyork overlap - 1pm -> 5pm UTC
+- Busiest trades during London Newyork overlap - 13:00 -> 17:00 UTC
 - Busiest days of week are Tues->Thurs
 
 
@@ -65,3 +65,7 @@ single pass through data. Could run all 4 in parallel on 4 CPUs
 
 ### Multi-day Time Window Training
 - Train model say from 7am to 9am, but use data from multiple days. Could penalize older data in weighting scheme
+
+### Parallel Julia
+Using Julia's require, @spawn / remotecall, @everywhere etc. can run 4 SVMs on 4 processors for training.
+Each processor computes classes from data, one processor allocated for hard-sell, sell etc... then performs training. Each Processor will now have generated a model. Once complete each proc waits for test data (Proc 1 creates a remote ref on each worker, once models are built workers wait on their references until datadata is available and Proc1 "put"s data into each remote ref). Test data to get individual classifications, fetch returns classification. Combine classifications to get 5 class value.

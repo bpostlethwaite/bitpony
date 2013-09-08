@@ -1,6 +1,6 @@
 var domready = require("domready")
   , shoe = require("shoe")
-  , candlestick = require("./lib/candlestick.js")
+  , candlestick = require("./node/lib/candlestick.js")
 
 domready( function () {
 
