@@ -33,28 +33,17 @@ function getIndicators(candle, win)
 end
 
 datasource = "../data/forex/dukascopy/EURUSD_Candlestick_1_m_BID_20.08.2013-22.08.2013.csv"
-candle = dukaCSV(datasource)
+candles = dukaCSV(datasource)
+
+println(candles)
 
 # Select range from 12 -> 14:00 UTC
 # year month day hour minute second
 # Setting month = 1 due to bug in Calendar!
 
-t1 = (2013, 1, 20, 11, 59, 0)
-t2 = (2013, 1, 20, 14, 01, 0)
+t1 = (2013, 8, 20, 11, 59, 0)
+t2 = (2013, 8, 20, 14, 01, 0)
 
-
-setCandleRange!(candle, t1, t2)
-
-window = 10
-indicators = getIndicators(candle, window)
-
-
-println(size(indicators))
-
-# min = 1
-# for i = 1:size(candles,1)
-#   PH[i] = max(data[
-# end
 
 
 

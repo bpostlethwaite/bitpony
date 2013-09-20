@@ -1,51 +1,53 @@
 module Candles
 
-using Calendar
+using Datetime
 
-export dukaCSV,
-       setCandleRange!
-
+export
+# types
+      Candle,
+# functions
+      dukaCSV
 
 type Candle
-
-  header::Array{String,1}
-  data::Array{Float64,2}
-  trange
-  _data::Array{Float64,2}
-  _trange
-
+  open::Float64
+  high::Float64
+  low::Float64
+  close::Float64
+  time
 end
 
-Candle(x, y, z) = Candle(x, y, z, y, z)
 
 function dukaCSV(datafile)
-
+  # Data example
+  # Time,Open,High,Low,Close,Volume
+  # 22.08.2013 23:59:00.000,1.04849,1.04849,1.04847,1.04848,20.08
   data, header = readcsv(datafile, has_header=true)
 
-  tdate = [Calendar.parse("dd.mm.yyyy HH:mm:ss", date) for date = data[:,1]]
+  candles = Array(Candle, size(data, 1))
 
-  data = data[:, 2 : 5]
-  header = header[2 : 5]
+  for i = 1:size(data, 1)
 
-  data = convert(Array{Float64,2}, data)
+    d = data[i,:]
+    # Extract numeric data
+    fd = map(float64, d[2:5])
 
-  Candle(header, data, tdate)
+    # Work on datatime
+    dt = split(d[1]," ")
+    ddate = map(int64, split(dt[1], "."))
+    dtime = split(dt[2], ":")
+    s = int64(split(dtime[3], ".")[1])
+    dtime = map(int64, dtime[1:2])
+
+    dtime = datetime(ddate[3], ddate[2], ddate[1], dtime[1], dtime[2], s)
+
+    candles[i] = Candle(fd[1], fd[2], fd[3], fd[4], dtime)
+
+  end
+
+  return candles
 
 end
 
-
-function setCandleRange!(candle::Candle, t1, t2)
-
-  tstart = ymd_hms(t1[1], t1[2], t1[3], t1[4], t1[5], t1[6])
-  tend   = ymd_hms(t2[1], t2[2], t2[3], t2[4], t2[5], t2[6])
-
-  tind = [ (tstart < t < tend)::Bool for t = candle._trange ]
-
-  # Chunk data into range
-  candle.trange = candle._trange[tind]
-  candle.data = candle._data[tind, :]
-
-end
 
 end
 

@@ -4,8 +4,6 @@
 - Busiest trades during London Newyork overlap - 13:00 -> 17:00 UTC
 - Busiest days of week are Tues->Thurs
 
-
-
 ## Forex Data
 - Historical from [Dukascopy](http://www.dukascopy.com/swiss/english/marketwatch/historical/)
 
@@ -42,6 +40,32 @@ single pass through data. Could run all 4 in parallel on 4 CPUs
 
 
 ### Support Vector Machine Indicators
+Note, develop a system that automatically runs through 1:n indicators
+and tries every combination and scores each result on a SET of predefined
+training runs, using different window sizes and training lengths etc.
+
+Eventually include a random weight trainer that randomly assigns weights
+to attributes in each node and tests.
+
+Run this stuff for a month.
+
+Set up system so you can add new attribute data and it will begin including
+it in the permutations - basically keep track of all tested permutations with
+a defined attribute naming/numbering scheme so we don't test same attribute
+mix twice.
+
+Develop a smart system to do this, as this will be extremely inefficient. Say we have N indicators, we want to know if using smaller subsamples sets gives better results.
+- First run with all N indicators.
+- Then randomly pick X indicators and test and rank results using only those X. - Assign each indicator an accumulating rank, the number of times it has been tested and the mean rank.
+- Assign to each group the Members of group and rank attained.
+- Do this N/X * 100 times.
+- Do groups > average(rank of members)
+- Do groups < average(rank of members)
+- Begin testing adding groups and individual indicators to find best feature set.
+- Develop a system where adding a new indicator gets tested with known groups.
+- Then begin testing using ranking as weights, add more indicators with lower weights, can we maximize testing performance or will we overfit?
+
+
 #### Price signals
 - Price Ratios (see masters thesis in GDrive)
 - Direct Price
@@ -51,20 +75,38 @@ single pass through data. Could run all 4 in parallel on 4 CPUs
 #### Trends
 - Running time (lambda) lag candle
 - Other methods to represent larger scale trends?
-- Moving Averages
-- Slope and Curvature at scales?
+- Multiple moving varied-length windows of Mean
+  - value (t or t-1)
+  - slope 1st derivative (t-1)
+  - curvature 2nd derivative (t-2)
+
+#### Bollinger Bands
+- High and low values for calculated bollinger band
+
+#### Standard Deviation
+- Multiple moving varied-length windows of standard deviation or variance
+  - value (t or t-1)
+  - slope 1st derivative (t-1)
+  - curvature 2nd derivative (t-2)
+
 
 #### Technical Indicators
 - Fibonacci levels
 - Supports and Resistance
-- Candle Patterns: See [babypips](http://www.babypips.com/school/elementary/japanese-candle-sticks/)
+
 
 #### Fractal Scaling
 - Model market on different scales: year-days, month-hours, day-minutes
 - Indicators at higher scales should project into models at lower scales
 
-### Multi-day Time Window Training
-- Train model say from 7am to 9am, but use data from multiple days. Could penalize older data in weighting scheme
+#### Frequency
+- Multiple moving varied-length windows of fft's
+  - n-bins
+  - Power Spectrum
+
+
+### Multi-day Time-Consistent Window Training
+- Train model say from 7am to 9am, but use data from the 7am to 9am window on multiple days. Could penalize older data in weighting scheme
 
 ### Parallel Julia
 Using Julia's require, @spawn / remotecall, @everywhere etc. can run 4 SVMs on 4 processors for training.
